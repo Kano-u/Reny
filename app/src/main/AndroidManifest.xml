@@ -9,6 +9,9 @@
         android:theme="@style/Theme.Reny">
         <activity
             android:name=".MainActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
