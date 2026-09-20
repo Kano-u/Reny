@@ -44,7 +44,7 @@ jobs:
         run: cp app/build/outputs/apk/release/app-release.apk Reny-release.apk
 
       - name: Publish latest release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: latest
           name: Reny latest
