@@ -80,7 +80,7 @@ class InputActivity : ComponentActivity() {
 }
 
 private fun Window.applyBackgroundBlur() {
-    setBackgroundBlurRadius((resources.displayMetrics.density * BLUR_RADIUS_DP).roundToInt())
+    setBackgroundBlurRadius((context.resources.displayMetrics.density * BLUR_RADIUS_DP).roundToInt())
 }
 
 @Composable
