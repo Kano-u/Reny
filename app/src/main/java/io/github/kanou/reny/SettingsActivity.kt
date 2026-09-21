@@ -185,15 +185,7 @@ private fun VoiceSettings() {
     val context = LocalContext.current
     val config = remember { ConfigStore.load(context) }
     var enabled by rememberSaveable { mutableStateOf(config.voiceEnabled) }
-    var delayText by rememberSaveable {
-        mutableStateOf(
-            if (config.voiceDelayMs == DEFAULT_VOICE_DELAY_MS) {
-                ""
-            } else {
-                config.voiceDelayMs.toString()
-            },
-        )
-    }
+    var delayText by rememberSaveable { mutableStateOf(config.voiceDelayMs.toString()) }
 
     Text(
         text = stringResource(R.string.settings_voice),
