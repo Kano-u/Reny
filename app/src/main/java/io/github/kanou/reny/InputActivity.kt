@@ -1,6 +1,7 @@
 package io.github.kanou.reny
 
 import android.os.Bundle
+import android.view.Window
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -53,13 +54,16 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import io.github.kanou.reny.ui.theme.RenyTheme
 import io.github.kanou.reny.ui.theme.loadThemeMode
+import kotlin.math.roundToInt
 
 private const val SEND_BAR_WIDTH_FRACTION = 0.88f
+private const val BLUR_RADIUS_DP = 32f
 
 class InputActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.applyBackgroundBlur()
 
         val themeMode = loadThemeMode(this)
         val sendBehavior = loadSendBehavior(this)
@@ -73,6 +77,10 @@ class InputActivity : ComponentActivity() {
             }
         }
     }
+}
+
+private fun Window.applyBackgroundBlur() {
+    setBackgroundBlurRadius((resources.displayMetrics.density * BLUR_RADIUS_DP).roundToInt())
 }
 
 @Composable
