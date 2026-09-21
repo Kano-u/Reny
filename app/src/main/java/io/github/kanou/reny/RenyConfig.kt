@@ -24,7 +24,7 @@ data class TermuxConfig(
 )
 
 object ConfigStore {
-    private const val FILE_NAME = "config.json"
+    const val FILE_NAME = "config.json"
 
     private val json =
         Json {
@@ -45,6 +45,16 @@ object ConfigStore {
     ) {
         configFile(context).writeText(json.encodeToString(transform(load(context))))
     }
+
+    fun export(context: Context): String = json.encodeToString(load(context))
+
+    fun import(
+        context: Context,
+        text: String,
+    ): Boolean =
+        runCatching { json.decodeFromString<RenyConfig>(text) }
+            .onSuccess { configFile(context).writeText(json.encodeToString(it)) }
+            .isSuccess
 
     private fun configFile(context: Context): File = File(context.filesDir, FILE_NAME)
 }
