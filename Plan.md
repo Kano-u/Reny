@@ -1,8 +1,45 @@
 # Plan — 把豆包语音自动触发集成进 Reny
 
-> 状态：**计划阶段，尚未改动任何代码**
+> 状态：**代码已完成，云端构建通过；待真机验证语音效果**
 > 来源项目：`C:\Users\Kano\Documents\ChatGPT\DouBao`
 > 目标项目：`C:\Users\Kano\Documents\ChatGPT\Reny`
+
+---
+
+## 执行结果（2026-09-21）
+
+Phase 1–4 已完成，提交 `ebf4657`，云端构建 `35600420928` 全绿：
+
+| 检查项 | 结果 |
+|--------|------|
+| `./gradlew ktlintCheck detekt` | BUILD SUCCESSFUL（`detekt` 与 `ktlintMainSourceSetCheck` 均实际执行） |
+| `./gradlew assembleRelease` | BUILD SUCCESSFUL |
+| APK 已发布 | Release `latest`，2.09 MB |
+
+对构建产物做了逐项核验（`unzip` + dex/manifest/arsc 字节级检查）：
+
+| 核验项 | 结果 |
+|--------|------|
+| `assets/xposed_init` | 内容为 `io.github.kanou.reny.RenyVoiceHook` |
+| R8 是否保留入口类 | `classes.dex` 中存在 `RenyVoiceHook`，keep 规则生效 |
+| 4 个 Xposed 元数据 | `xposedmodule` / `xposeddescription` / `xposedminversion` / `xposedscope` 均在 manifest 中 |
+| `xposedscope` 取值 | `com.bytedance.android.doubaoime` |
+| 关键字面量 | `DoFunctionKey`、`onStartInputView`、`onFinishInputView`、`ImeService`、`KeyboardJni`、`io.github.kanou.reny.voice` 均在 dex 中 |
+| 原有 App 功能 | `InputActivity`、`SettingsActivity`、`TermuxSettingsActivity`、Termux 权限、任务栈 affinity 均未受影响 |
+| APK 签名 | v2/v3 签名块存在 |
+
+**计划阶段的风险全部消解或降级：**
+
+- `privateImeOptions` 是否会送达 —— 已通过反编译 Compose 1.12.1 字节码确认完整链路：
+  `PlatformImeOptions.getPrivateImeOptions()` → `ImeOptions.getPlatformImeOptions()`
+  → `TextInputServiceAndroid_androidKt.update()` 写入
+  `EditorInfo.privateImeOptions`。风险由「中」降为「低」，但那行诊断日志保留，
+  真机上仍可一眼确认。
+- R8 混淆入口类 —— keep 规则已生效并已在 APK 中核验。
+- ktlint / detekt —— 云端已实际执行并通过。
+
+**剩余唯一未验证项：真机上的语音触发效果**（需要装有 LSPosed + 豆包输入法的手机），
+步骤见下方 Phase 5。
 
 ---
 
@@ -332,7 +369,7 @@ Reny 的 release 构建开了 `isMinifyEnabled = true`，R8 会把 `RenyVoiceHoo
 
 | 风险 | 等级 | 说明与应对 |
 |------|------|-----------|
-| `privateImeOptions` 未送达 | **中** | Compose 理论上会把 `platformImeOptions` 写进 `EditorInfo`，但本机无法编译验证。Phase 3 的那行诊断日志就是为此准备的：真机上若日志显示 `privateImeOptions=null`，则退回到「只按包名判定」（并接受设置页输入框也会触发语音，或改为在设置页输入框上单独挂一个空标记） |
+| `privateImeOptions` 未送达 | 低（已验证） | 已反编译 Compose 字节码确认 `PlatformImeOptions` 会被写入 `EditorInfo.privateImeOptions`。真机上若日志显示 `privateImeOptions=null`，则退回到「只按包名判定」（接受设置页输入框也会触发语音，或给设置页输入框单独挂一个空标记） |
 | R8 混淆掉入口类 | **中** | Phase 4 已覆盖。若忘记，症状是「模块显示已启用但完全没反应」，极易误判成 LSPosed 问题 |
 | 豆包输入法升级后混淆名变化 | 中 | `ImeService` / `KeyboardJni` / `DoFunctionKey` 都是 v1.4.5 的名字。升级后若失效，按 `reverse-analysis/xposed-hook` 的「方法签名匹配」思路重新定位 |
 | 触发时输入法工具栏状态不符 | 低 | `DoFunctionKey(6, "tool")` 走的是原生路径，DouBao 项目已验证可用；Reny 只是换了触发时机判定 |
