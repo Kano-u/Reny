@@ -47,23 +47,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import io.github.kanou.reny.ui.theme.RenyTheme
-import io.github.kanou.reny.ui.theme.loadThemeMode
 
 class TermuxSettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val themeMode = loadThemeMode(this)
-        val initialSettings = loadTermuxSettings(this)
+        val config = ConfigStore.load(this)
 
         setContent {
-            RenyTheme(themeMode = themeMode) {
+            RenyTheme(themeMode = config.themeMode) {
                 TermuxSettingsScreen(
-                    initialSettings = initialSettings,
+                    initialConfig = config.termux,
                     onBack = ::finish,
-                    onSave = { settings ->
-                        saveTermuxSettings(applicationContext, settings)
+                    onSave = { termux ->
+                        ConfigStore.update(applicationContext) { it.copy(termux = termux) }
                         Toast
                             .makeText(
                                 this,
@@ -81,18 +79,18 @@ class TermuxSettingsActivity : ComponentActivity() {
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun TermuxSettingsScreen(
-    initialSettings: TermuxSettings,
+    initialConfig: TermuxConfig,
     onBack: () -> Unit,
-    onSave: (TermuxSettings) -> Unit,
+    onSave: (TermuxConfig) -> Unit,
 ) {
     val context = LocalContext.current
     val requiredMessage = stringResource(R.string.termux_settings_required)
-    var commandPath by rememberSaveable { mutableStateOf(initialSettings.commandPath) }
+    var commandPath by rememberSaveable { mutableStateOf(initialConfig.commandPath) }
     var argumentsText by rememberSaveable {
-        mutableStateOf(initialSettings.arguments.joinToString("\n"))
+        mutableStateOf(initialConfig.arguments.joinToString("\n"))
     }
-    var workdir by rememberSaveable { mutableStateOf(initialSettings.workdir) }
-    var executionMode by rememberSaveable { mutableStateOf(initialSettings.executionMode) }
+    var workdir by rememberSaveable { mutableStateOf(initialConfig.workdir) }
+    var executionMode by rememberSaveable { mutableStateOf(initialConfig.executionMode) }
 
     fun save() {
         val normalizedCommandPath = commandPath.trim()
@@ -107,7 +105,7 @@ private fun TermuxSettingsScreen(
                 .split('\n')
                 .filter { it.isNotBlank() }
         onSave(
-            TermuxSettings(
+            TermuxConfig(
                 commandPath = normalizedCommandPath,
                 arguments = arguments,
                 workdir = normalizedWorkdir,

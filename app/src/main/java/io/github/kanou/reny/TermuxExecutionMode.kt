@@ -14,8 +14,4 @@ enum class TermuxExecutionMode {
                 BACKGROUND -> R.string.termux_execution_mode_background
                 TERMINAL -> R.string.termux_execution_mode_terminal
             }
-
-    companion object {
-        fun fromPreference(value: String?): TermuxExecutionMode = entries.firstOrNull { it.name == value } ?: BACKGROUND
-    }
 }

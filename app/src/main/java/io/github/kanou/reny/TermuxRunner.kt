@@ -36,18 +36,18 @@ object TermuxRunner {
 
     fun runScript(
         context: Context,
-        settings: TermuxSettings,
+        config: TermuxConfig,
         argument: String,
     ): Boolean {
         val intent =
             Intent(ACTION_RUN_COMMAND)
                 .setClassName(TERMUX_PACKAGE_NAME, RUN_COMMAND_SERVICE)
-                .putExtra(EXTRA_COMMAND_PATH, settings.commandPath)
-                .putExtra(EXTRA_ARGUMENTS, (settings.arguments + argument).toTypedArray())
-                .putExtra(EXTRA_WORKDIR, settings.workdir)
+                .putExtra(EXTRA_COMMAND_PATH, config.commandPath)
+                .putExtra(EXTRA_ARGUMENTS, (config.arguments + argument).toTypedArray())
+                .putExtra(EXTRA_WORKDIR, config.workdir)
                 .putExtra(
                     EXTRA_RUNNER,
-                    when (settings.executionMode) {
+                    when (config.executionMode) {
                         TermuxExecutionMode.BACKGROUND -> RUNNER_APP_SHELL
                         TermuxExecutionMode.TERMINAL -> RUNNER_TERMINAL_SESSION
                     },

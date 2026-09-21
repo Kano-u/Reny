@@ -36,8 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import io.github.kanou.reny.ui.theme.RenyTheme
 import io.github.kanou.reny.ui.theme.ThemeMode
-import io.github.kanou.reny.ui.theme.loadThemeMode
-import io.github.kanou.reny.ui.theme.saveThemeMode
 
 class SettingsActivity : ComponentActivity() {
     private val requestRunCommandPermission =
@@ -45,7 +43,7 @@ class SettingsActivity : ComponentActivity() {
             ActivityResultContracts.RequestPermission(),
         ) { granted ->
             if (granted) {
-                saveSendBehavior(applicationContext, SendBehavior.TERMUX)
+                ConfigStore.update(applicationContext) { it.copy(sendBehavior = SendBehavior.TERMUX) }
                 recreate()
             } else {
                 Toast
@@ -61,11 +59,12 @@ class SettingsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val initialThemeMode = loadThemeMode(this)
+        val config = ConfigStore.load(this)
+        val initialThemeMode = config.themeMode
         val initialSendBehavior =
-            loadSendBehavior(this).let { behavior ->
+            config.sendBehavior.let { behavior ->
                 if (behavior == SendBehavior.TERMUX && !TermuxRunner.isInstalled(this)) {
-                    saveSendBehavior(this, SendBehavior.NONE)
+                    ConfigStore.update(this) { it.copy(sendBehavior = SendBehavior.NONE) }
                     SendBehavior.NONE
                 } else {
                     behavior
@@ -82,7 +81,7 @@ class SettingsActivity : ComponentActivity() {
                     sendBehavior = sendBehavior,
                     onThemeModeChange = { selectedMode ->
                         themeMode = selectedMode
-                        saveThemeMode(applicationContext, selectedMode)
+                        ConfigStore.update(applicationContext) { it.copy(themeMode = selectedMode) }
                     },
                     onOpenTermuxSettings = {
                         startActivity(Intent(this, TermuxSettingsActivity::class.java))
@@ -91,7 +90,9 @@ class SettingsActivity : ComponentActivity() {
                         when (selectedBehavior) {
                             SendBehavior.NONE -> {
                                 sendBehavior = selectedBehavior
-                                saveSendBehavior(applicationContext, selectedBehavior)
+                                ConfigStore.update(
+                                    applicationContext,
+                                ) { it.copy(sendBehavior = selectedBehavior) }
                             }
 
                             SendBehavior.TERMUX -> {
@@ -107,7 +108,9 @@ class SettingsActivity : ComponentActivity() {
 
                                     TermuxRunner.hasPermission(applicationContext) -> {
                                         sendBehavior = selectedBehavior
-                                        saveSendBehavior(applicationContext, selectedBehavior)
+                                        ConfigStore.update(
+                                            applicationContext,
+                                        ) { it.copy(sendBehavior = selectedBehavior) }
                                     }
 
                                     else -> {

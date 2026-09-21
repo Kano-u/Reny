@@ -52,7 +52,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import io.github.kanou.reny.ui.theme.RenyTheme
-import io.github.kanou.reny.ui.theme.loadThemeMode
 
 private const val SEND_BAR_WIDTH_FRACTION = 0.88f
 
@@ -61,13 +60,12 @@ class InputActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        val themeMode = loadThemeMode(this)
-        val sendBehavior = loadSendBehavior(this)
+        val config = ConfigStore.load(this)
 
         setContent {
-            RenyTheme(themeMode = themeMode) {
+            RenyTheme(themeMode = config.themeMode) {
                 SendBar(
-                    sendBehavior = sendBehavior,
+                    config = config,
                     onDismiss = ::finish,
                 )
             }
@@ -77,7 +75,7 @@ class InputActivity : ComponentActivity() {
 
 @Composable
 private fun SendBar(
-    sendBehavior: SendBehavior,
+    config: RenyConfig,
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -89,8 +87,7 @@ private fun SendBar(
     val canSend = text.isNotBlank()
 
     fun sendToTermux(command: String) {
-        val settings = loadTermuxSettings(context)
-        if (TermuxRunner.runScript(context, settings, command)) {
+        if (TermuxRunner.runScript(context, config.termux, command)) {
             text = ""
             onDismiss()
         } else {
@@ -192,7 +189,7 @@ private fun SendBar(
 
             IconButton(
                 onClick = {
-                    when (sendBehavior) {
+                    when (config.sendBehavior) {
                         SendBehavior.NONE -> {
                             Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
                             text = ""

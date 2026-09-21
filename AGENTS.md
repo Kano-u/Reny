@@ -2,11 +2,11 @@
 
 ## 编写代码的范例
 
-编写的代码应当通过 ktlint 和 detekt 的检查
+编写的代码应当通过 ktlint 和 detekt 的检查。
 
 ## 当前环境
 
-当前默认使用的Shell为：git bash
+当前默认使用的Shell为：git bash。
 
 ## 用户特质
 
@@ -14,12 +14,13 @@
 
 ## 本机没有安卓环境
 
-全部编译都放在 GitHub 云端，并且会自动进行 ktlint 和 detekt 的检查
+本机没有提供可供编程的Java开发环境。
+全部编译都放在 GitHub 云端，并且会自动进行 ktlint 和 detekt 的检查。
 
 ## gh 命令行工具
 
-当前的环境变量：`GH_TOKEN` 已经包含可信的凭据
-推送到云端仓库时，优先使用 gh 命令行工具
+当前的环境变量：`GH_TOKEN` 已经包含可信的凭据。
+推送到云端仓库时，优先使用 gh 命令行工具。
 
 ## 非常重要、需要遵循的原则
 
@@ -28,7 +29,7 @@
 例如，最优的命令若因权限失败，不退回其他方案；我们应该给它权限，让命令跑通。
 写代码遇到多方案，先问用户保留哪个，并说明各自优点。只有用户明确要多方案，才保留。
 
-遵循Arch Linux哲学
+遵循Arch Linux哲学。
 1. 永远不考虑兼容性，像Arch Linux一样，只追求最新稳定的方案。
 
 遵循"只留关键，不堆兼容"的原则
@@ -41,7 +42,8 @@
 
 - `app/src/main/java/io/github/kanou/reny/InputActivity.kt`：透明输入面板、输入框和发送按钮。
 - `app/src/main/java/io/github/kanou/reny/SettingsActivity.kt`：设置页，包含主题和发送行为。
-- `app/src/main/java/io/github/kanou/reny/SendBehavior.kt`：读取和保存发送行为偏好。
+- `app/src/main/java/io/github/kanou/reny/RenyConfig.kt`：全部用户数据的唯一来源，读写应用私有目录下的 `config.json`。
+- `app/src/main/java/io/github/kanou/reny/SendBehavior.kt`：发送行为枚举。
 - `app/src/main/java/io/github/kanou/reny/TermuxRunner.kt`：检查 Termux 和权限，通过 `RUN_COMMAND` 调用 `~/reny.sh`。
 - `app/src/main/java/io/github/kanou/reny/ui/theme/`：主题配色和主题偏好。
 - `app/src/main/res/`：Android 字符串、颜色、主题和图标资源。
