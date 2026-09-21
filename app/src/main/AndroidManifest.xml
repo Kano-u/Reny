@@ -15,8 +15,10 @@
         android:theme="@style/Theme.Reny">
         <activity android:name=".SettingsActivity" android:exported="true" />
         <activity android:name=".TermuxSettingsActivity" />
+        <!-- 透明界面单独一个任务栈，避免启动输入框时把设置页一起带回前台 -->
         <activity
             android:name=".InputActivity"
+            android:taskAffinity="io.github.kanou.reny.input"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:theme="@style/Theme.Reny.Transparent"
