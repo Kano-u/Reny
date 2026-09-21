@@ -57,6 +57,19 @@ import io.github.kanou.reny.ui.theme.RenyTheme
 
 private const val SEND_BAR_WIDTH_FRACTION = 0.88f
 
+/** 语音关闭时不带任何标记，豆包输入法进程就不会触发。 */
+private fun voiceKeyboardOptions(config: RenyConfig): KeyboardOptions =
+    KeyboardOptions(
+        platformImeOptions =
+            PlatformImeOptions(
+                if (config.voiceEnabled) {
+                    voiceImeOptionValue(config.voiceDelayMs)
+                } else {
+                    null
+                },
+            ),
+    )
+
 class InputActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -162,17 +175,7 @@ private fun SendBar(
                 value = text,
                 onValueChange = { text = it },
                 singleLine = true,
-                keyboardOptions =
-                    KeyboardOptions(
-                        platformImeOptions =
-                            PlatformImeOptions(
-                                if (config.voiceEnabled) {
-                                    voiceImeOptionValue(config.voiceDelayMs)
-                                } else {
-                                    null
-                                },
-                            ),
-                    ),
+                keyboardOptions = voiceKeyboardOptions(config),
                 textStyle =
                     MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface,
