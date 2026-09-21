@@ -16,7 +16,8 @@ enum class TermuxExecutionMode {
             }
 
     companion object {
-        fun fromPreference(value: String?): TermuxExecutionMode =
-            entries.firstOrNull { it.name == value } ?: BACKGROUND
+        fun fromPreference(value: String?): TermuxExecutionMode {
+            return entries.firstOrNull { it.name == value } ?: BACKGROUND
+        }
     }
 }
