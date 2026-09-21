@@ -30,10 +30,11 @@ android {
     val keystorePassword = providers.environmentVariable("RENY_KEYSTORE_PASSWORD")
     val keyAlias = providers.environmentVariable("RENY_KEY_ALIAS")
     val keyPassword = providers.environmentVariable("RENY_KEY_PASSWORD")
-    val hasReleaseSigning = keystoreFile.isPresent &&
-        keystorePassword.isPresent &&
-        keyAlias.isPresent &&
-        keyPassword.isPresent
+    val hasReleaseSigning =
+        keystoreFile.isPresent &&
+            keystorePassword.isPresent &&
+            keyAlias.isPresent &&
+            keyPassword.isPresent
 
     signingConfigs {
         if (hasReleaseSigning) {
