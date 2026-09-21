@@ -1,7 +1,7 @@
 [versions]
 detekt = "2.0.0-alpha.6"
 ktlint-gradle = "14.2.0"
-ktlint = "1.8.0"
+ktlintVersion = "1.8.0"
 agp = "9.4.1"
 composeCompiler = "2.2.10"
 composeBom = "2026.09.00"

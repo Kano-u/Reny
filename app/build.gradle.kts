@@ -63,7 +63,7 @@ kotlin {
 
 ktlint {
     android.set(true)
-    version.set(libs.versions.ktlint.get())
+    version.set(libs.versions.ktlintVersion.get())
 }
 
 detekt {
