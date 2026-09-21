@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -58,23 +60,56 @@ class InputActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val themeMode = loadThemeMode(this)
+        val sendBehavior = loadSendBehavior(this)
 
         setContent {
             RenyTheme(themeMode = themeMode) {
-                SendBar(onDismiss = ::finish)
+                SendBar(
+                    sendBehavior = sendBehavior,
+                    onDismiss = ::finish,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun SendBar(onDismiss: () -> Unit) {
+private fun SendBar(
+    sendBehavior: SendBehavior,
+    onDismiss: () -> Unit,
+) {
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val hint = stringResource(R.string.hint_input)
     var text by rememberSaveable { mutableStateOf("") }
+    var pendingTermuxText by rememberSaveable { mutableStateOf("") }
     val canSend = text.isNotBlank()
+
+    fun sendToTermux(command: String) {
+        if (TermuxRunner.runScript(context, command)) {
+            text = ""
+            onDismiss()
+        } else {
+            Toast.makeText(context, R.string.termux_send_failed, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val requestRunCommandPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        val command = pendingTermuxText
+        pendingTermuxText = ""
+        if (granted && command.isNotEmpty()) {
+            sendToTermux(command)
+        } else if (!granted) {
+            Toast.makeText(
+                context,
+                R.string.termux_permission_denied,
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
 
     BackHandler(onBack = onDismiss)
 
@@ -148,9 +183,32 @@ private fun SendBar(onDismiss: () -> Unit) {
 
             IconButton(
                 onClick = {
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-                    text = ""
-                    onDismiss()
+                    when (sendBehavior) {
+                        SendBehavior.NONE -> {
+                            Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                            text = ""
+                            onDismiss()
+                        }
+
+                        SendBehavior.TERMUX -> when {
+                            !TermuxRunner.isInstalled(context) -> {
+                                Toast.makeText(
+                                    context,
+                                    R.string.termux_not_installed,
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                            }
+
+                            !TermuxRunner.hasPermission(context) -> {
+                                pendingTermuxText = text
+                                requestRunCommandPermission.launch(
+                                    TermuxRunner.RUN_COMMAND_PERMISSION,
+                                )
+                            }
+
+                            else -> sendToTermux(text)
+                        }
+                    }
                 },
                 enabled = canSend,
                 modifier = Modifier.size(48.dp),

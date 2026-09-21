@@ -1,7 +1,9 @@
 package io.github.kanou.reny
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,21 +38,75 @@ import io.github.kanou.reny.ui.theme.loadThemeMode
 import io.github.kanou.reny.ui.theme.saveThemeMode
 
 class SettingsActivity : ComponentActivity() {
+    private val requestRunCommandPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (granted) {
+            saveSendBehavior(applicationContext, SendBehavior.TERMUX)
+            recreate()
+        } else {
+            Toast.makeText(
+                this,
+                R.string.termux_permission_denied,
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val initialThemeMode = loadThemeMode(this)
+        val initialSendBehavior = loadSendBehavior(this).let { behavior ->
+            if (behavior == SendBehavior.TERMUX && !TermuxRunner.isInstalled(this)) {
+                saveSendBehavior(this, SendBehavior.NONE)
+                SendBehavior.NONE
+            } else {
+                behavior
+            }
+        }
 
         setContent {
             var themeMode by rememberSaveable { mutableStateOf(initialThemeMode) }
+            var sendBehavior by rememberSaveable { mutableStateOf(initialSendBehavior) }
 
             RenyTheme(themeMode = themeMode) {
                 SettingsScreen(
                     themeMode = themeMode,
+                    sendBehavior = sendBehavior,
                     onThemeModeChange = { selectedMode ->
                         themeMode = selectedMode
                         saveThemeMode(applicationContext, selectedMode)
+                    },
+                    onSendBehaviorChange = { selectedBehavior ->
+                        when (selectedBehavior) {
+                            SendBehavior.NONE -> {
+                                sendBehavior = selectedBehavior
+                                saveSendBehavior(applicationContext, selectedBehavior)
+                            }
+
+                            SendBehavior.TERMUX -> when {
+                                !TermuxRunner.isInstalled(applicationContext) -> {
+                                    Toast.makeText(
+                                        this,
+                                        R.string.termux_not_installed,
+                                        Toast.LENGTH_SHORT,
+                                    ).show()
+                                }
+
+                                TermuxRunner.hasPermission(applicationContext) -> {
+                                    sendBehavior = selectedBehavior
+                                    saveSendBehavior(applicationContext, selectedBehavior)
+                                }
+
+                                else -> {
+                                    requestRunCommandPermission.launch(
+                                        TermuxRunner.RUN_COMMAND_PERMISSION,
+                                    )
+                                }
+                            }
+                        }
                     },
                 )
             }
@@ -62,7 +118,9 @@ class SettingsActivity : ComponentActivity() {
 @Composable
 private fun SettingsScreen(
     themeMode: ThemeMode,
+    sendBehavior: SendBehavior,
     onThemeModeChange: (ThemeMode) -> Unit,
+    onSendBehaviorChange: (SendBehavior) -> Unit,
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -106,6 +164,38 @@ private fun SettingsScreen(
                                         ThemeMode.SYSTEM -> R.string.theme_system
                                         ThemeMode.LIGHT -> R.string.theme_light
                                         ThemeMode.DARK -> R.string.theme_dark
+                                    },
+                                ),
+                            )
+                        },
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = stringResource(R.string.settings_send_behavior),
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                SendBehavior.entries.forEachIndexed { index, behavior ->
+                    SegmentedButton(
+                        selected = sendBehavior == behavior,
+                        onClick = { onSendBehaviorChange(behavior) },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = SendBehavior.entries.size,
+                        ),
+                        label = {
+                            Text(
+                                text = stringResource(
+                                    when (behavior) {
+                                        SendBehavior.NONE -> R.string.send_behavior_none
+                                        SendBehavior.TERMUX -> R.string.send_behavior_termux
                                     },
                                 ),
                             )

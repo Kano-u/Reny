@@ -5,6 +5,12 @@
     <string name="action_send">发送</string>
     <string name="settings_title">设置</string>
     <string name="settings_theme">主题</string>
+    <string name="settings_send_behavior">发送行为</string>
+    <string name="send_behavior_none">无行为</string>
+    <string name="send_behavior_termux">Termux</string>
+    <string name="termux_not_installed">未安装 Termux</string>
+    <string name="termux_permission_denied">未授予 Termux 运行命令权限</string>
+    <string name="termux_send_failed">无法调用 Termux</string>
     <string name="theme_system">系统</string>
     <string name="theme_light">浅色</string>
     <string name="theme_dark">深色</string>
