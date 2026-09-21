@@ -17,6 +17,7 @@ object TermuxRunner {
     private const val EXTRA_WORKDIR = "com.termux.RUN_COMMAND_WORKDIR"
     private const val EXTRA_RUNNER = "com.termux.RUN_COMMAND_RUNNER"
     private const val RUNNER_APP_SHELL = "app-shell"
+    private const val RUNNER_TERMINAL_SESSION = "terminal-session"
 
     fun isInstalled(context: Context): Boolean =
         try {
@@ -44,7 +45,13 @@ object TermuxRunner {
                 .putExtra(EXTRA_COMMAND_PATH, settings.commandPath)
                 .putExtra(EXTRA_ARGUMENTS, (settings.arguments + argument).toTypedArray())
                 .putExtra(EXTRA_WORKDIR, settings.workdir)
-                .putExtra(EXTRA_RUNNER, RUNNER_APP_SHELL)
+                .putExtra(
+                    EXTRA_RUNNER,
+                    when (settings.executionMode) {
+                        TermuxExecutionMode.BACKGROUND -> RUNNER_APP_SHELL
+                        TermuxExecutionMode.TERMINAL -> RUNNER_TERMINAL_SESSION
+                    },
+                )
 
         return try {
             context.startForegroundService(intent)

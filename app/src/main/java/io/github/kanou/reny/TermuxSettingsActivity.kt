@@ -23,10 +23,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -75,6 +79,7 @@ class TermuxSettingsActivity : ComponentActivity() {
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun TermuxSettingsScreen(
     initialSettings: TermuxSettings,
     onBack: () -> Unit,
@@ -87,6 +92,7 @@ private fun TermuxSettingsScreen(
         mutableStateOf(initialSettings.arguments.joinToString("\n"))
     }
     var workdir by rememberSaveable { mutableStateOf(initialSettings.workdir) }
+    var executionMode by rememberSaveable { mutableStateOf(initialSettings.executionMode) }
 
     fun save() {
         val normalizedCommandPath = commandPath.trim()
@@ -105,6 +111,7 @@ private fun TermuxSettingsScreen(
                 commandPath = normalizedCommandPath,
                 arguments = arguments,
                 workdir = normalizedWorkdir,
+                executionMode = executionMode,
             ),
         )
     }
@@ -170,6 +177,40 @@ private fun TermuxSettingsScreen(
                         ),
                     modifier = Modifier.fillMaxWidth(),
                 )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                    text = stringResource(R.string.termux_settings_execution_mode),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                    TermuxExecutionMode.entries.forEachIndexed { index, mode ->
+                        SegmentedButton(
+                            selected = executionMode == mode,
+                            onClick = { executionMode = mode },
+                            shape =
+                                SegmentedButtonDefaults.itemShape(
+                                    index = index,
+                                    count = TermuxExecutionMode.entries.size,
+                                ),
+                            label = {
+                                Text(
+                                    text =
+                                        stringResource(
+                                            when (mode) {
+                                                TermuxExecutionMode.BACKGROUND -> R.string.termux_execution_mode_background
+                                                TermuxExecutionMode.TERMINAL -> R.string.termux_execution_mode_terminal
+                                            },
+                                        ),
+                                )
+                            },
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 

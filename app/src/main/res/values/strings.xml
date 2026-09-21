@@ -13,6 +13,9 @@
     <string name="termux_settings_arguments_hint">每行一个参数</string>
     <string name="termux_settings_workdir">工作目录</string>
     <string name="termux_settings_workdir_hint">~/</string>
+    <string name="termux_settings_execution_mode">执行方式</string>
+    <string name="termux_execution_mode_background">后台</string>
+    <string name="termux_execution_mode_terminal">终端</string>
     <string name="termux_settings_required">命令路径和工作目录不能为空</string>
     <string name="termux_settings_saved">已保存</string>
     <string name="settings_title">设置</string>
