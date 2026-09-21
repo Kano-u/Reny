@@ -54,6 +54,8 @@ import androidx.core.view.WindowCompat
 import io.github.kanou.reny.ui.theme.RenyTheme
 import io.github.kanou.reny.ui.theme.loadThemeMode
 
+private const val SEND_BAR_WIDTH_FRACTION = 0.88f
+
 class InputActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,7 +139,7 @@ private fun SendBar(
         Row(
             modifier = Modifier
                 .align(Alignment.Center)
-                .fillMaxWidth(0.88f)
+                .fillMaxWidth(SEND_BAR_WIDTH_FRACTION)
                 .widthIn(max = 560.dp)
                 .height(64.dp)
                 .shadow(elevation = 6.dp, shape = shape, clip = false)

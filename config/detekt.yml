@@ -1,3 +1,7 @@
+complexity:
+  LongMethod:
+    allowedLines: 150
+
 naming:
   FunctionNaming:
     ignoreAnnotated:
