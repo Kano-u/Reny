@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:shortcutId="open_input"
+        android:shortcutLongLabel="@string/shortcut_open_input"
+        android:shortcutShortLabel="@string/shortcut_open_input">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="io.github.kanou.reny.InputActivity"
+            android:targetPackage="io.github.kanou.reny" />
+    </shortcut>
+</shortcuts>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Reny</string>
+    <string name="shortcut_open_input">语音框</string>
     <string name="hint_input">输入内容</string>
     <string name="action_send">发送</string>
     <string name="action_back">返回</string>
