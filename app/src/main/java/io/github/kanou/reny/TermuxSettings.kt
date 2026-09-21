@@ -17,16 +17,20 @@ fun loadTermuxSettings(context: Context): TermuxSettings {
     val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     return TermuxSettings(
         commandPath = preferences.getString(COMMAND_PATH_KEY, "").orEmpty(),
-        arguments = preferences
-            .getString(ARGUMENTS_KEY, "")
-            .orEmpty()
-            .split('\n')
-            .filter { it.isNotBlank() },
+        arguments =
+            preferences
+                .getString(ARGUMENTS_KEY, "")
+                .orEmpty()
+                .split('\n')
+                .filter { it.isNotBlank() },
         workdir = preferences.getString(WORKDIR_KEY, "").orEmpty(),
     )
 }
 
-fun saveTermuxSettings(context: Context, settings: TermuxSettings) {
+fun saveTermuxSettings(
+    context: Context,
+    settings: TermuxSettings,
+) {
     context
         .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         .edit()

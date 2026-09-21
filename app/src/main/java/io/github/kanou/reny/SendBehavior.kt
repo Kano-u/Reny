@@ -4,11 +4,11 @@ import android.content.Context
 
 enum class SendBehavior {
     NONE,
-    TERMUX;
+    TERMUX,
+    ;
 
     companion object {
-        fun fromPreference(value: String?): SendBehavior =
-            entries.firstOrNull { it.name == value } ?: NONE
+        fun fromPreference(value: String?): SendBehavior = entries.firstOrNull { it.name == value } ?: NONE
     }
 }
 
@@ -16,13 +16,17 @@ private const val PREFERENCES_NAME = "settings"
 private const val SEND_BEHAVIOR_KEY = "send_behavior"
 
 fun loadSendBehavior(context: Context): SendBehavior {
-    val value = context
-        .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-        .getString(SEND_BEHAVIOR_KEY, null)
+    val value =
+        context
+            .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+            .getString(SEND_BEHAVIOR_KEY, null)
     return SendBehavior.fromPreference(value)
 }
 
-fun saveSendBehavior(context: Context, behavior: SendBehavior) {
+fun saveSendBehavior(
+    context: Context,
+    behavior: SendBehavior,
+) {
     context
         .getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         .edit()

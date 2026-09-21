@@ -60,11 +60,12 @@ class TermuxSettingsActivity : ComponentActivity() {
                     onBack = ::finish,
                     onSave = { settings ->
                         saveTermuxSettings(applicationContext, settings)
-                        Toast.makeText(
-                            this,
-                            R.string.termux_settings_saved,
-                            Toast.LENGTH_SHORT,
-                        ).show()
+                        Toast
+                            .makeText(
+                                this,
+                                R.string.termux_settings_saved,
+                                Toast.LENGTH_SHORT,
+                            ).show()
                         finish()
                     },
                 )
@@ -95,9 +96,10 @@ private fun TermuxSettingsScreen(
             return
         }
 
-        val arguments = argumentsText
-            .split('\n')
-            .filter { it.isNotBlank() }
+        val arguments =
+            argumentsText
+                .split('\n')
+                .filter { it.isNotBlank() }
         onSave(
             TermuxSettings(
                 commandPath = normalizedCommandPath,
@@ -114,12 +116,12 @@ private fun TermuxSettingsScreen(
         color = MaterialTheme.colorScheme.background,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(
-                    WindowInsets.systemBars.union(WindowInsets.displayCutout),
-                )
-                .padding(horizontal = 24.dp, vertical = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(
+                        WindowInsets.systemBars.union(WindowInsets.displayCutout),
+                    ).padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -147,10 +149,11 @@ private fun TermuxSettingsScreen(
             }
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(top = 24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(top = 24.dp),
             ) {
                 OutlinedTextField(
                     value = commandPath,
@@ -160,10 +163,11 @@ private fun TermuxSettingsScreen(
                         Text(stringResource(R.string.termux_settings_command_path_hint))
                     },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Uri,
-                        imeAction = ImeAction.Next,
-                    ),
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Uri,
+                            imeAction = ImeAction.Next,
+                        ),
                     modifier = Modifier.fillMaxWidth(),
                 )
 
@@ -191,10 +195,11 @@ private fun TermuxSettingsScreen(
                         Text(stringResource(R.string.termux_settings_workdir_hint))
                     },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Uri,
-                        imeAction = ImeAction.Done,
-                    ),
+                    keyboardOptions =
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Uri,
+                            imeAction = ImeAction.Done,
+                        ),
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

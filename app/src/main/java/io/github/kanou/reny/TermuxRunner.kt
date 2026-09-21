@@ -38,12 +38,13 @@ object TermuxRunner {
         settings: TermuxSettings,
         argument: String,
     ): Boolean {
-        val intent = Intent(ACTION_RUN_COMMAND)
-            .setClassName(TERMUX_PACKAGE_NAME, RUN_COMMAND_SERVICE)
-            .putExtra(EXTRA_COMMAND_PATH, settings.commandPath)
-            .putExtra(EXTRA_ARGUMENTS, (settings.arguments + argument).toTypedArray())
-            .putExtra(EXTRA_WORKDIR, settings.workdir)
-            .putExtra(EXTRA_RUNNER, RUNNER_APP_SHELL)
+        val intent =
+            Intent(ACTION_RUN_COMMAND)
+                .setClassName(TERMUX_PACKAGE_NAME, RUN_COMMAND_SERVICE)
+                .putExtra(EXTRA_COMMAND_PATH, settings.commandPath)
+                .putExtra(EXTRA_ARGUMENTS, (settings.arguments + argument).toTypedArray())
+                .putExtra(EXTRA_WORKDIR, settings.workdir)
+                .putExtra(EXTRA_RUNNER, RUNNER_APP_SHELL)
 
         return try {
             context.startForegroundService(intent)

@@ -98,21 +98,23 @@ private fun SendBar(
         }
     }
 
-    val requestRunCommandPermission = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { granted ->
-        val command = pendingTermuxText
-        pendingTermuxText = ""
-        if (granted && command.isNotEmpty()) {
-            sendToTermux(command)
-        } else if (!granted) {
-            Toast.makeText(
-                context,
-                R.string.termux_permission_denied,
-                Toast.LENGTH_SHORT,
-            ).show()
+    val requestRunCommandPermission =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { granted ->
+            val command = pendingTermuxText
+            pendingTermuxText = ""
+            if (granted && command.isNotEmpty()) {
+                sendToTermux(command)
+            } else if (!granted) {
+                Toast
+                    .makeText(
+                        context,
+                        R.string.termux_permission_denied,
+                        Toast.LENGTH_SHORT,
+                    ).show()
+            }
         }
-    }
 
     BackHandler(onBack = onDismiss)
 
@@ -124,49 +126,53 @@ private fun SendBar(
     val shape = RoundedCornerShape(percent = 50)
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.displayCutout)),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.displayCutout)),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(onDismiss) {
-                    detectTapGestures(onTap = { onDismiss() })
-                },
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .pointerInput(onDismiss) {
+                        detectTapGestures(onTap = { onDismiss() })
+                    },
         )
 
         Row(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth(SEND_BAR_WIDTH_FRACTION)
-                .widthIn(max = 560.dp)
-                .height(64.dp)
-                .shadow(elevation = 6.dp, shape = shape, clip = false)
-                .clip(shape)
-                .background(MaterialTheme.colorScheme.surface)
-                .pointerInput(Unit) {
-                    awaitPointerEventScope {
-                        while (true) {
-                            awaitPointerEvent()
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .fillMaxWidth(SEND_BAR_WIDTH_FRACTION)
+                    .widthIn(max = 560.dp)
+                    .height(64.dp)
+                    .shadow(elevation = 6.dp, shape = shape, clip = false)
+                    .clip(shape)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .pointerInput(Unit) {
+                        awaitPointerEventScope {
+                            while (true) {
+                                awaitPointerEvent()
+                            }
                         }
-                    }
-                }
-                .padding(start = 24.dp, end = 8.dp),
+                    }.padding(start = 24.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             BasicTextField(
                 value = text,
                 onValueChange = { text = it },
                 singleLine = true,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
+                textStyle =
+                    MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .focusRequester(focusRequester),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .focusRequester(focusRequester),
                 decorationBox = { innerTextField ->
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -193,23 +199,28 @@ private fun SendBar(
                             onDismiss()
                         }
 
-                        SendBehavior.TERMUX -> when {
-                            !TermuxRunner.isInstalled(context) -> {
-                                Toast.makeText(
-                                    context,
-                                    R.string.termux_not_installed,
-                                    Toast.LENGTH_SHORT,
-                                ).show()
-                            }
+                        SendBehavior.TERMUX -> {
+                            when {
+                                !TermuxRunner.isInstalled(context) -> {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            R.string.termux_not_installed,
+                                            Toast.LENGTH_SHORT,
+                                        ).show()
+                                }
 
-                            !TermuxRunner.hasPermission(context) -> {
-                                pendingTermuxText = text
-                                requestRunCommandPermission.launch(
-                                    TermuxRunner.RUN_COMMAND_PERMISSION,
-                                )
-                            }
+                                !TermuxRunner.hasPermission(context) -> {
+                                    pendingTermuxText = text
+                                    requestRunCommandPermission.launch(
+                                        TermuxRunner.RUN_COMMAND_PERMISSION,
+                                    )
+                                }
 
-                            else -> sendToTermux(text)
+                                else -> {
+                                    sendToTermux(text)
+                                }
+                            }
                         }
                     }
                 },
@@ -219,11 +230,12 @@ private fun SendBar(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
                     contentDescription = stringResource(R.string.action_send),
-                    tint = if (canSend) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-                    },
+                    tint =
+                        if (canSend) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                        },
                 )
             }
         }
