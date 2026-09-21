@@ -17,8 +17,6 @@ object TermuxRunner {
     private const val EXTRA_WORKDIR = "com.termux.RUN_COMMAND_WORKDIR"
     private const val EXTRA_RUNNER = "com.termux.RUN_COMMAND_RUNNER"
     private const val RUNNER_APP_SHELL = "app-shell"
-    private const val TERMUX_HOME_DIR = "/data/data/com.termux/files/home"
-    private const val SCRIPT_PATH = "$TERMUX_HOME_DIR/reny.sh"
 
     fun isInstalled(context: Context): Boolean =
         try {
@@ -35,12 +33,16 @@ object TermuxRunner {
         ContextCompat.checkSelfPermission(context, RUN_COMMAND_PERMISSION) ==
             PackageManager.PERMISSION_GRANTED
 
-    fun runScript(context: Context, argument: String): Boolean {
+    fun runScript(
+        context: Context,
+        settings: TermuxSettings,
+        argument: String,
+    ): Boolean {
         val intent = Intent(ACTION_RUN_COMMAND)
             .setClassName(TERMUX_PACKAGE_NAME, RUN_COMMAND_SERVICE)
-            .putExtra(EXTRA_COMMAND_PATH, SCRIPT_PATH)
-            .putExtra(EXTRA_ARGUMENTS, arrayOf(argument))
-            .putExtra(EXTRA_WORKDIR, TERMUX_HOME_DIR)
+            .putExtra(EXTRA_COMMAND_PATH, settings.commandPath)
+            .putExtra(EXTRA_ARGUMENTS, (settings.arguments + argument).toTypedArray())
+            .putExtra(EXTRA_WORKDIR, settings.workdir)
             .putExtra(EXTRA_RUNNER, RUNNER_APP_SHELL)
 
         return try {

@@ -1,10 +1,11 @@
 package io.github.kanou.reny
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -23,6 +24,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,6 +81,9 @@ class SettingsActivity : ComponentActivity() {
                         themeMode = selectedMode
                         saveThemeMode(applicationContext, selectedMode)
                     },
+                    onOpenTermuxSettings = {
+                        startActivity(Intent(this, TermuxSettingsActivity::class.java))
+                    },
                     onSendBehaviorChange = { selectedBehavior ->
                         when (selectedBehavior) {
                             SendBehavior.NONE -> {
@@ -120,6 +125,7 @@ private fun SettingsScreen(
     themeMode: ThemeMode,
     sendBehavior: SendBehavior,
     onThemeModeChange: (ThemeMode) -> Unit,
+    onOpenTermuxSettings: () -> Unit,
     onSendBehaviorChange: (SendBehavior) -> Unit,
 ) {
     Surface(
@@ -202,6 +208,19 @@ private fun SettingsScreen(
                         },
                     )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = stringResource(R.string.settings_termux),
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            TextButton(onClick = onOpenTermuxSettings) {
+                Text(stringResource(R.string.settings_termux_configure))
             }
         }
     }

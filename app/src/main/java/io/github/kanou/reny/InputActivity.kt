@@ -87,7 +87,8 @@ private fun SendBar(
     val canSend = text.isNotBlank()
 
     fun sendToTermux(command: String) {
-        if (TermuxRunner.runScript(context, command)) {
+        val settings = loadTermuxSettings(context)
+        if (TermuxRunner.runScript(context, settings, command)) {
             text = ""
             onDismiss()
         } else {
