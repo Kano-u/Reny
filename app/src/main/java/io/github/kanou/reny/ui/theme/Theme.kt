@@ -39,9 +39,14 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun RenyTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
     content: @Composable () -> Unit,
 ) {
+    val darkTheme = when (themeMode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+    }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {

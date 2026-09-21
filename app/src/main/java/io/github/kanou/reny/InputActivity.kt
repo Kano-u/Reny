@@ -50,14 +50,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import io.github.kanou.reny.ui.theme.RenyTheme
+import io.github.kanou.reny.ui.theme.loadThemeMode
 
-class MainActivity : ComponentActivity() {
+class InputActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        val themeMode = loadThemeMode(this)
+
         setContent {
-            RenyTheme {
+            RenyTheme(themeMode = themeMode) {
                 SendBar(onDismiss = ::finish)
             }
         }
