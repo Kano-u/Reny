@@ -236,7 +236,9 @@ private fun VoiceSettings() {
             ConfigStore.update(context) { it.copy(voiceDelayMs = delayMs) }
         },
         label = { Text(stringResource(R.string.settings_voice_delay)) },
-        placeholder = { Text(stringResource(R.string.voice_delay_default)) },
+        placeholder = {
+            Text(stringResource(R.string.voice_delay_default, DEFAULT_VOICE_DELAY_MS))
+        },
         suffix = { Text(stringResource(R.string.voice_delay_suffix)) },
         enabled = enabled,
         singleLine = true,

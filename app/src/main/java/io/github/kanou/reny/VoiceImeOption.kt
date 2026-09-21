@@ -12,7 +12,7 @@ package io.github.kanou.reny
 const val VOICE_IME_OPTION = "io.github.kanou.reny.voice"
 
 /** 键盘弹出到触发语音之间的默认等待时间。 */
-const val DEFAULT_VOICE_DELAY_MS = 500
+const val DEFAULT_VOICE_DELAY_MS = 200
 
 /** 生成发送栏使用的标记值。 */
 fun voiceImeOptionValue(delayMs: Int): String = "$VOICE_IME_OPTION:$delayMs"

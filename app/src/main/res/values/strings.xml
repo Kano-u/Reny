@@ -33,7 +33,7 @@
     <string name="voice_enabled">开启</string>
     <string name="voice_disabled">关闭</string>
     <string name="voice_delay_suffix">ms</string>
-    <string name="voice_delay_default">默认 500</string>
+    <string name="voice_delay_default">默认 %1$d</string>
     <string name="settings_send_behavior">发送行为</string>
     <string name="send_behavior_none">无行为</string>
     <string name="send_behavior_termux">Termux</string>
