@@ -28,6 +28,12 @@
     <string name="settings_import_failed">剪贴板内容不是有效的 config.json</string>
     <string name="settings_export_done">已导出 config.json 到剪贴板</string>
     <string name="settings_theme">主题</string>
+    <string name="settings_voice">语音输入</string>
+    <string name="settings_voice_delay">等待时间</string>
+    <string name="voice_enabled">开启</string>
+    <string name="voice_disabled">关闭</string>
+    <string name="voice_delay_suffix">ms</string>
+    <string name="voice_delay_default">默认 500</string>
     <string name="settings_send_behavior">发送行为</string>
     <string name="send_behavior_none">无行为</string>
     <string name="send_behavior_termux">Termux</string>

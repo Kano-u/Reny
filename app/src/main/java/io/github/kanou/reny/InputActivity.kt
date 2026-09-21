@@ -164,7 +164,14 @@ private fun SendBar(
                 singleLine = true,
                 keyboardOptions =
                     KeyboardOptions(
-                        platformImeOptions = PlatformImeOptions(VOICE_IME_OPTION),
+                        platformImeOptions =
+                            PlatformImeOptions(
+                                if (config.voiceEnabled) {
+                                    voiceImeOptionValue(config.voiceDelayMs)
+                                } else {
+                                    null
+                                },
+                            ),
                     ),
                 textStyle =
                     MaterialTheme.typography.bodyLarge.copy(

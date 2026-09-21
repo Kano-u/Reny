@@ -13,7 +13,8 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
  * LSPosed 模块：Reny 发送栏弹出豆包键盘后，自动复刻工具栏「点击说话」的原生调用路径。
  *
  * 模板来自 DouBao 项目的已验证实现，去掉了状态广播，并改用包名 +
- * [VOICE_IME_OPTION] 双校验，避免设置页输入框误触发。
+ * [VOICE_IME_OPTION] 双校验，避免设置页输入框误触发。等待时间由标记值携带，
+ * 用户在 Reny 设置页可调。
  */
 class RenyVoiceHook : IXposedHookLoadPackage {
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
@@ -60,9 +61,8 @@ class RenyVoiceHook : IXposedHookLoadPackage {
     private fun maybeAutoStartForEditor(editorInfo: EditorInfo?) {
         if (editorInfo == null || editorInfo.packageName != APP_PACKAGE) return
 
-        // 首次真机确认 Compose 是否把 PlatformImeOptions 写进了 EditorInfo
-        XposedBridge.log("$TAG editor privateImeOptions=${editorInfo.privateImeOptions}")
-        if (editorInfo.privateImeOptions != VOICE_IME_OPTION || !autoTriggerArmed) return
+        val delayMs = parseVoiceDelayMs(editorInfo.privateImeOptions)
+        if (delayMs == null || !autoTriggerArmed) return
 
         autoTriggerArmed = false
         autoTriggerGeneration++
@@ -74,7 +74,7 @@ class RenyVoiceHook : IXposedHookLoadPackage {
                     requestNativeToolbarAsr()
                 }
             }
-        Handler(Looper.getMainLooper()).postDelayed(trigger, AUTO_TRIGGER_DELAY_MS)
+        Handler(Looper.getMainLooper()).postDelayed(trigger, delayMs.toLong())
     }
 
     /**
@@ -114,9 +114,6 @@ class RenyVoiceHook : IXposedHookLoadPackage {
         // KeyboardJni.DoFunctionKey(6, "tool") 是工具栏「点击说话」的 native 入口
         private const val TOOLBAR_START_ASR = 6
         private const val TRIGGER_SOURCE = "tool"
-
-        // 等键盘 UI 完成布局后再触发，否则原生 ASR 波纹拿不到已就绪的 InputView
-        private const val AUTO_TRIGGER_DELAY_MS = 500L
 
         private var targetClassLoader: ClassLoader? = null
         private var autoTriggerArmed = true

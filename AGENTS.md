@@ -59,13 +59,15 @@
 ## Reny 同时是 LSPosed 模块
 
 Reny 的 APK 既是普通应用，也是 LSPosed 模块，作用域为豆包输入法
-（`com.bytedance.android.doubaoime`）。发送栏弹出豆包键盘后会自动触发原生语音识别，
-机制来自 DouBao 项目的逆向成果，详见 `Plan.md`。
+（`com.bytedance.android.doubaoime`）。发送栏弹出豆包键盘后，模块会在输入法进程内
+复刻工具栏「点击说话」的调用（`KeyboardJni.DoFunctionKey(6, "tool")`），
+识别、波纹动画和文本上屏全部仍由豆包负责。
 
 改动相关代码时注意：
 
 - 新增或重命名 `RenyVoiceHook` 时，必须同步改 `assets/xposed_init` 与 `proguard-rules.pro`
   两处，否则模块会毫无提示地失效。
-- `RenyVoiceHook` 运行在豆包输入法进程内，与 `VOICE_IME_OPTION` 的写入方跨进程，
-  字面量只能定义在 `VoiceImeOption.kt`。
+- 发送栏与输入法进程之间只靠 `EditorInfo.privateImeOptions` 通信，格式为
+  `io.github.kanou.reny.voice:<延迟毫秒>`，由 `VoiceImeOption.kt` 统一定义。
+- 发送栏不再带该标记（语音关闭）时，模块不会触发。
 - Xposed API 依赖必须是 `compileOnly`，运行时由 LSPosed 框架提供。

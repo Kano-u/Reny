@@ -12,6 +12,8 @@ import java.io.File
 data class RenyConfig(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val sendBehavior: SendBehavior = SendBehavior.NONE,
+    val voiceEnabled: Boolean = true,
+    val voiceDelayMs: Int = DEFAULT_VOICE_DELAY_MS,
     val termux: TermuxConfig = TermuxConfig(),
 )
 

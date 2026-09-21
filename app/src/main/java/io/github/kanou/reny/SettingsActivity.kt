@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -31,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -44,7 +46,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import io.github.kanou.reny.ui.theme.RenyTheme
@@ -172,6 +177,76 @@ class SettingsActivity : ComponentActivity() {
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun VoiceSettings() {
+    val context = LocalContext.current
+    val config = remember { ConfigStore.load(context) }
+    var enabled by rememberSaveable { mutableStateOf(config.voiceEnabled) }
+    var delayText by rememberSaveable {
+        mutableStateOf(
+            if (config.voiceDelayMs == DEFAULT_VOICE_DELAY_MS) {
+                ""
+            } else {
+                config.voiceDelayMs.toString()
+            },
+        )
+    }
+
+    Text(
+        text = stringResource(R.string.settings_voice),
+        style = MaterialTheme.typography.titleMedium,
+    )
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+        SegmentedButton(
+            selected = enabled,
+            onClick = {
+                enabled = true
+                ConfigStore.update(context) { it.copy(voiceEnabled = true) }
+            },
+            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
+            label = { Text(stringResource(R.string.voice_enabled)) },
+        )
+
+        SegmentedButton(
+            selected = !enabled,
+            onClick = {
+                enabled = false
+                ConfigStore.update(context) { it.copy(voiceEnabled = false) }
+            },
+            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
+            label = { Text(stringResource(R.string.voice_disabled)) },
+        )
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    OutlinedTextField(
+        value = delayText,
+        onValueChange = { text ->
+            val digits = text.filter { it.isDigit() }
+            delayText = digits
+            // 清空即回到默认等待时间
+            val delayMs = digits.toIntOrNull() ?: DEFAULT_VOICE_DELAY_MS
+            ConfigStore.update(context) { it.copy(voiceDelayMs = delayMs) }
+        },
+        label = { Text(stringResource(R.string.settings_voice_delay)) },
+        placeholder = { Text(stringResource(R.string.voice_delay_default)) },
+        suffix = { Text(stringResource(R.string.voice_delay_suffix)) },
+        enabled = enabled,
+        singleLine = true,
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done,
+            ),
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -320,6 +395,10 @@ private fun SettingsScreen(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            VoiceSettings()
 
             Spacer(modifier = Modifier.height(32.dp))
 
