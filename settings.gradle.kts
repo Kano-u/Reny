@@ -11,6 +11,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // LSPosed 模块所需的 Xposed API
+        maven { url = uri("https://api.xposed.info/") }
     }
 }
 

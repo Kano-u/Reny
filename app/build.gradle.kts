@@ -14,8 +14,8 @@ android {
         applicationId = "io.github.kanou.reny"
         minSdk = 35
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
     }
 
     buildFeatures {
@@ -52,6 +52,10 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
             signingConfig = signingConfigs.findByName("release")
         }
     }
@@ -85,4 +89,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
 
     implementation(libs.kotlinx.serialization.json)
+
+    // Xposed API 只用于编译，运行时由 LSPosed 框架提供
+    compileOnly(libs.xposed.api)
 }

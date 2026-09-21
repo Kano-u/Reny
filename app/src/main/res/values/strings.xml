@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Reny</string>
+    <string name="xposed_description">为 Reny 输入框自动拉起豆包原生语音识别</string>
     <string name="hint_input">输入内容</string>
     <string name="action_send">发送</string>
     <string name="action_back">返回</string>
