@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.ktlint)
     alias(libs.plugins.compose.compiler)
 }
 
@@ -57,6 +59,16 @@ kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
+}
+
+ktlint {
+    android.set(true)
+    version.set(libs.versions.ktlint.get())
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom("$rootDir/config/detekt.yml")
 }
 
 dependencies {
