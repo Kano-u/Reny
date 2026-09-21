@@ -198,15 +198,7 @@ private fun TermuxSettingsScreen(
                                     count = TermuxExecutionMode.entries.size,
                                 ),
                             label = {
-                                Text(
-                                    text =
-                                        stringResource(
-                                            when (mode) {
-                                                TermuxExecutionMode.BACKGROUND -> R.string.termux_execution_mode_background
-                                                TermuxExecutionMode.TERMINAL -> R.string.termux_execution_mode_terminal
-                                            },
-                                        ),
-                                )
+                                Text(text = stringResource(mode.labelRes))
                             },
                         )
                     }
