@@ -2,8 +2,8 @@ package io.github.kanou.reny
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfoFlags
 import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PackageInfoFlags
 import androidx.core.content.ContextCompat
 
 object TermuxRunner {
